@@ -2,6 +2,7 @@
   "name": "scrollfit.js",
   "version": "0.0.1",
   "dependencies": {
+    "amp-defaults": "^1.0.1",
     "amp-each": "^1.0.1",
     "domready": "^1.0.8",
     "requestanimationframe": "0.0.22"

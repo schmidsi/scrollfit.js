@@ -1,73 +1,64 @@
-#_raf     = require 'requestanimationframe'
+_raf     = require 'requestanimationframe'
 domready = require 'domready'
+defaults = require 'amp-defaults'
 each     = require 'amp-each'
 
 
 class ScrollFit
-    constructor: (el, options) ->
+    constructor: (el, options = {}) ->
+        @options = defaults options,
+            step: 0.25      # amount of increasing or decreasing the fontsize
+            onResize: true  # bind resize handler?
+
         @el = el
-        @updateBounds()
         @maxFontSize = undefined
 
         style = window.getComputedStyle( @el )
         @lastFontSize = @initialFontSize = @fontSize = parseInt( style.fontSize )
 
-        console.log
-            el: el
-            inBounds: @inBounds()
-            clientHeight: el.clientHeight
-            scrollHeight: el.scrollHeight
-            clientWidth: el.clientWidth
-            scrollWidth: el.scrollWidth
-
         if @inBounds() then @grow() else @shrink()
 
+        if @options.onResize
+            window.addEventListener 'resize', @onResize.bind(@)
 
-    updateBounds: ->
-        @clientHeight = @el.clientHeight
-        @scrollHeight = @el.scrollHeight
-        @clientWidth = @el.clientWidth
-        @scrollWidth = @el.scrollWidth
+    onResize: ->
+        if not @ticking
+            @ticking = true
+            @maxFontSize = undefined
+
+
+            if @inBounds()
+                window.requestAnimationFrame( @grow.bind(@) )
+            else
+                window.requestAnimationFrame( @shrink.bind(@) )
 
     inBounds: ->
-        return @clientHeight >= @scrollHeight and
-            @clientWidth >= @scrollWidth
+        return @el.clientHeight + (@fontSize / 8) >= @el.scrollHeight and
+               @el.clientWidth  + (@fontSize / 8) >= @el.scrollWidth
 
     grow: ->
         @lastFontSize = @fontSize
-        @fontSize++
+        @fontSize += @options.step
 
-        if @fontSize >= @maxFontSize then return false
+        if @fontSize >= @maxFontSize
+            @ticking = false
+            return false
 
         @el.style.fontSize = @fontSize + 'px'
-
-        @updateBounds()
 
         if @inBounds()
             @grow()
-            # return window.requestAnimationFrame( @grow.bind(@) )
         else
             @maxFontSize = @fontSize
             @shrink()
-            #return window.requestAnimationFrame( @shrink.bind(@) )
 
     shrink: ->
         @lastFontSize = @fontSize
-        @fontSize--
+        @fontSize -= @options.step
 
         @el.style.fontSize = @fontSize + 'px'
 
-        @updateBounds()
-
         if @inBounds() then @grow() else @shrink()
-
-
-        #    window.requestAnimationFrame( @grow.bind(@) )
-        #else
-        #    window.requestAnimationFrame( @shrink.bind(@) )
-
-
-
 
 
 domready ->
