@@ -51,7 +51,7 @@ class ScrollFit
     onResize: ->
         if not @ticking
             @ticking = true
-            @maxFontSize = undefined
+            @candidate = @maxFontSize
 
             if @inBounds()
                 window.requestAnimationFrame( @grow.bind(@) )
