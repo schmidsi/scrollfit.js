@@ -66,3 +66,6 @@ domready ->
 
     each els, (el) ->
         new ScrollFit(el)
+
+
+module.exports = ScrollFit

@@ -1,6 +1,24 @@
 {
   "name": "scrollfit.js",
   "version": "0.0.1",
+  "description": "Tiny vanilla js module that fits text inside an HTML Element according to its scrollWidth/scrollHeight compared to its clientWidth/clientHeight",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:schmidsi/scrollfit.js.git"
+  },
+  "keywords": [
+    "html",
+    "js",
+    "vanilla-js",
+    "textfit",
+    "fittext",
+    "fontsize"
+  ],
+  "author": "Simon Schmid <simon@schmid.io> (http://www.schmid.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/schmidsi/scrollfit.js/issues"
+  },
   "dependencies": {
     "amp-defaults": "^1.0.1",
     "amp-each": "^1.0.1",
