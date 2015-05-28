@@ -6,12 +6,12 @@ scrollWidth/scrollHeight compared to its clientWidth/clientHeight.
 
 ## Installation
 
-    npm install scrollfit.js --save
+    npm install scrollfit --save
 
 
 ## Usage
 
-    Scrollfit = require('scrollfit.js')
+    Scrollfit = require('scrollfit')
 
     new Scrollfit(document.querySelector('.scrollfit'))
 
