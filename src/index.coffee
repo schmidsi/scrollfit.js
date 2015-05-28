@@ -1,20 +1,47 @@
-_raf     = require 'requestanimationframe'
-domready = require 'domready'
-defaults = require 'amp-defaults'
-each     = require 'amp-each'
+_raf       = require 'requestanimationframe'
+
+_          = {}
+_.defaults = require 'amp-defaults'
+
+
+DEFAULTS =
+    # amount of increasing or decreasing the fontsize
+    step: 0.25
+
+    # bind resize handler?
+    onResize: true
+
+    # the maximum font size in pixel. set to 'initial', to disable
+    # growing over the initial font size
+    maxFontSize: 100
+
+    # the maximum font size in pixel. set to 'initial', to disable
+    # shrinking over the initial font size
+    minFontSize: 1
 
 
 class ScrollFit
     constructor: (el, options = {}) ->
-        @options = defaults options,
-            step: 0.25      # amount of increasing or decreasing the fontsize
-            onResize: true  # bind resize handler?
+        if not el then return false
+
+        @options = _.defaults( options, DEFAULTS )
 
         @el = el
-        @maxFontSize = undefined
 
         style = window.getComputedStyle( @el )
-        @lastFontSize = @initialFontSize = @fontSize = parseInt( style.fontSize )
+        @fontSize = parseInt( style.fontSize )
+
+        if options.maxFontSize is 'initial'
+            @maxFontSize = @fontSize
+        else
+            @maxFontSize = options.maxFontSize
+
+        if options.minFontSize is 'initial'
+            @minFontSize = @fontSize
+        else
+            @minFontSize = options.minFontSize
+
+        @candidate = @maxFontSize
 
         if @inBounds() then @grow() else @shrink()
 
@@ -26,7 +53,6 @@ class ScrollFit
             @ticking = true
             @maxFontSize = undefined
 
-
             if @inBounds()
                 window.requestAnimationFrame( @grow.bind(@) )
             else
@@ -37,35 +63,28 @@ class ScrollFit
                @el.clientWidth  + (@fontSize / 8) >= @el.scrollWidth
 
     grow: ->
-        @lastFontSize = @fontSize
         @fontSize += @options.step
 
-        if @fontSize >= @maxFontSize
-            @ticking = false
-            return false
+        if @fontSize >= @candidate or @fontSize >= @maxFontSize
+            return @ticking = false
 
         @el.style.fontSize = @fontSize + 'px'
 
         if @inBounds()
             @grow()
         else
-            @maxFontSize = @fontSize
+            @candidate = @fontSize
             @shrink()
 
     shrink: ->
-        @lastFontSize = @fontSize
         @fontSize -= @options.step
+
+        if @fontSize <= @minFontSize
+            return @ticking = false
 
         @el.style.fontSize = @fontSize + 'px'
 
         if @inBounds() then @grow() else @shrink()
 
 
-domready ->
-    els = document.querySelectorAll('[data-hook~=scrollfit]')
-
-    each els, (el) ->
-        new ScrollFit(el)
-
-
-module.exports = ScrollFit
+module.exports = window.ScrollFit = ScrollFit
