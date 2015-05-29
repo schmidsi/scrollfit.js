@@ -41,12 +41,18 @@ class ScrollFit
         else
             @minFontSize = options.minFontSize
 
-        @candidate = @maxFontSize
-
-        if @inBounds() then @grow() else @shrink()
+        @update()
 
         if @options.onResize
             window.addEventListener 'resize', @onResize.bind(@)
+
+    update: ->
+        # silently abort if there is no @el
+        if not @el then return false
+
+        @candidate = @maxFontSize
+
+        if @inBounds() then @grow() else @shrink()
 
     onResize: ->
         if not @ticking
