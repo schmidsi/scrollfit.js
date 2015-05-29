@@ -1,6 +1,6 @@
 {
   "name": "scrollfit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Tiny vanilla js module that fits text inside an HTML Element according to its scrollWidth/scrollHeight compared to its clientWidth/clientHeight",
   "repository": {
     "type": "git",

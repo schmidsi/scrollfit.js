@@ -31,6 +31,9 @@ class ScrollFit
         style = window.getComputedStyle( @el )
         @fontSize = parseInt( style.fontSize )
 
+        if not @fontSize
+            throw new Error('scrollfit: cannot determine fontsize of el')
+
         if options.maxFontSize is 'initial'
             @maxFontSize = @fontSize
         else
